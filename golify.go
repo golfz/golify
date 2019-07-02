@@ -1,6 +1,9 @@
 package golify
 
-import "reflect"
+import (
+    "reflect"
+    "strconv"
+)
 
 type golifyObject struct {
     Value interface{}
@@ -176,5 +179,37 @@ func (g golifyObject) LessThan(max interface{}, errCode int, errMsg string) goli
     return golifyObject{
         Value: g.Value,
         Err:   nil,
+    }
+}
+
+func (g golifyObject) atoi(errCode int, errMsg string) golifyObject {
+    if g.Err != nil {
+        return g
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf("abc") {
+        i, e := strconv.Atoi(g.Value.(string))
+        if e != nil {
+            return golifyObject{
+                Value: g.Value,
+                Err: &golifyErr{
+                    ErrCode: errCode,
+                    ErrMsg:  errMsg,
+                },
+            }
+        }
+
+        return golifyObject{
+            Value: i,
+            Err:   nil,
+        }
+    }
+
+    return golifyObject{
+        Value: g.Value,
+        Err: &golifyErr{
+            ErrCode: errCode,
+            ErrMsg:  errMsg,
+        },
     }
 }
