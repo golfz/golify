@@ -182,7 +182,7 @@ func (g golifyObject) LessThan(max interface{}, errCode int, errMsg string) goli
     }
 }
 
-func (g golifyObject) atoi(errCode int, errMsg string) golifyObject {
+func (g golifyObject) Atoi(errCode int, errMsg string) golifyObject {
     if g.Err != nil {
         return g
     }
