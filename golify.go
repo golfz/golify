@@ -44,6 +44,28 @@ func (g golifyObject) NotNil(errCode int, errMsg string) golifyObject {
     }
 }
 
+func (g golifyObject) IsString(errCode int, errMsg string) golifyObject {
+
+    if g.Err != nil {
+        return g
+    }
+
+    if reflect.TypeOf(g.Value) != reflect.TypeOf("abc") {
+        return golifyObject{
+            Value: g.Value,
+            Err: &golifyErr{
+                ErrCode: errCode,
+                ErrMsg:  errMsg,
+            },
+        }
+    }
+
+    return golifyObject{
+        Value: g.Value,
+        Err:   nil,
+    }
+}
+
 func (g golifyObject) IsInt(errCode int, errMsg string) golifyObject {
 
     if g.Err != nil {
