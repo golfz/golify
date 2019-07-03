@@ -2,10 +2,9 @@ package golify
 
 import (
     "reflect"
-    "strconv"
 )
 
-type golifyObject struct {
+type golifyUnknownObject struct {
     Value interface{}
     Err   *golifyErr
 }
@@ -15,21 +14,21 @@ type golifyErr struct {
     ErrMsg  string
 }
 
-func Validate(value interface{}) golifyObject {
-    return golifyObject{
+func Init(value interface{}) golifyUnknownObject {
+    return golifyUnknownObject{
         Value: value,
         Err:   nil,
     }
 }
 
-func (g golifyObject) NotNil(errCode int, errMsg string) golifyObject {
+func (g golifyUnknownObject) NotNil(errCode int, errMsg string) golifyUnknownObject {
 
     if g.Err != nil {
         return g
     }
 
     if g.Value == nil {
-        return golifyObject{
+        return golifyUnknownObject{
             Value: g.Value,
             Err: &golifyErr{
                 ErrCode: errCode,
@@ -38,200 +37,90 @@ func (g golifyObject) NotNil(errCode int, errMsg string) golifyObject {
         }
     }
 
-    return golifyObject{
+    return golifyUnknownObject{
         Value: g.Value,
         Err:   nil,
     }
 }
 
-func (g golifyObject) IsString(errCode int, errMsg string) golifyObject {
+func (g golifyUnknownObject) ToString(errCode int, errMsg string) golifyStringObject {
 
     if g.Err != nil {
-        return g
-    }
-
-    if reflect.TypeOf(g.Value) != reflect.TypeOf("abc") {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
+        return golifyStringObject{
+            Value: "",
+            Err:   g.Err,
         }
-    }
-
-    return golifyObject{
-        Value: g.Value,
-        Err:   nil,
-    }
-}
-
-func (g golifyObject) IsInt(errCode int, errMsg string) golifyObject {
-
-    if g.Err != nil {
-        return g
-    }
-
-    if reflect.TypeOf(g.Value) != reflect.TypeOf(1) {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    return golifyObject{
-        Value: g.Value,
-        Err:   nil,
-    }
-}
-
-func (g golifyObject) MoreThan(min interface{}, errCode int, errMsg string) golifyObject {
-
-    if g.Err != nil {
-        return g
-    }
-
-    fMin := 1.0
-
-    if reflect.TypeOf(min) == reflect.TypeOf(1) {
-        fMin = float64(min.(int))
-
-    } else if reflect.TypeOf(min) == reflect.TypeOf(1.1) {
-        fMin = min.(float64)
-
-    } else {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    gVal := 1.0
-
-    if reflect.TypeOf(g.Value) == reflect.TypeOf(1) {
-        gVal = float64(g.Value.(int))
-
-    } else if reflect.TypeOf(g.Value) == reflect.TypeOf(1.1) {
-        gVal = g.Value.(float64)
-
-    } else {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    if gVal < fMin {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    return golifyObject{
-        Value: g.Value,
-        Err:   nil,
-    }
-}
-
-func (g golifyObject) LessThan(max interface{}, errCode int, errMsg string) golifyObject {
-
-    if g.Err != nil {
-        return g
-    }
-
-    fMax := 1.0
-
-    if reflect.TypeOf(max) == reflect.TypeOf(1) {
-        fMax = float64(max.(int))
-
-    } else if reflect.TypeOf(max) == reflect.TypeOf(1.1) {
-        fMax = max.(float64)
-
-    } else {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    gVal := 1.0
-
-    if reflect.TypeOf(g.Value) == reflect.TypeOf(1) {
-        gVal = float64(g.Value.(int))
-
-    } else if reflect.TypeOf(g.Value) == reflect.TypeOf(1.1) {
-        gVal = g.Value.(float64)
-
-    } else {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    if gVal > fMax {
-        return golifyObject{
-            Value: g.Value,
-            Err: &golifyErr{
-                ErrCode: errCode,
-                ErrMsg:  errMsg,
-            },
-        }
-    }
-
-    return golifyObject{
-        Value: g.Value,
-        Err:   nil,
-    }
-}
-
-func (g golifyObject) Atoi(errCode int, errMsg string) golifyObject {
-    if g.Err != nil {
-        return g
     }
 
     if reflect.TypeOf(g.Value) == reflect.TypeOf("abc") {
-        i, e := strconv.Atoi(g.Value.(string))
-        if e != nil {
-            return golifyObject{
-                Value: g.Value,
-                Err: &golifyErr{
-                    ErrCode: errCode,
-                    ErrMsg:  errMsg,
-                },
-            }
-        }
-
-        return golifyObject{
-            Value: i,
+        return golifyStringObject{
+            Value: g.Value.(string),
             Err:   nil,
         }
     }
 
-    return golifyObject{
-        Value: g.Value,
+    return golifyStringObject{
+        Value: "",
         Err: &golifyErr{
             ErrCode: errCode,
             ErrMsg:  errMsg,
         },
     }
+
 }
+
+func (g golifyUnknownObject) ToInteger(errCode int, errMsg string) golifyIntegerObject {
+
+    if g.Err != nil {
+        return golifyIntegerObject{
+            Value: 0,
+            Err:   g.Err,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(int(1)) {
+        return golifyIntegerObject{
+            Value: int64(g.Value.(int)),
+            Err:   nil,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(int8(1)) {
+        return golifyIntegerObject{
+            Value: int64(g.Value.(int8)),
+            Err:   nil,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(int16(1)) {
+        return golifyIntegerObject{
+            Value: int64(g.Value.(int16)),
+            Err:   nil,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(int32(1)) {
+        return golifyIntegerObject{
+            Value: int64(g.Value.(int32)),
+            Err:   nil,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(int64(1)) {
+        return golifyIntegerObject{
+            Value: g.Value.(int64),
+            Err:   nil,
+        }
+    }
+
+    return golifyIntegerObject{
+        Value: 0,
+        Err: &golifyErr{
+            ErrCode: errCode,
+            ErrMsg:  errMsg,
+        },
+    }
+
+}
+
+
