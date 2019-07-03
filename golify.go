@@ -122,5 +122,3 @@ func (g golifyUnknownObject) ToInteger(errCode int, errMsg string) golifyInteger
     }
 
 }
-
-

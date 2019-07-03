@@ -1,40 +1,33 @@
 package golify
 
+import "strconv"
+
 type golifyStringObject struct {
     Value string
     Err   *golifyErr
 }
 
-/*
-func (g golifyUnknownObject) Atoi(errCode int, errMsg string) golifyUnknownObject {
+func (g golifyStringObject) Atoi(errCode int, errMsg string) golifyIntegerObject {
     if g.Err != nil {
-        return g
-    }
-
-    if reflect.TypeOf(g.Value) == reflect.TypeOf("abc") {
-        i, e := strconv.Atoi(g.Value.(string))
-        if e != nil {
-            return golifyUnknownObject{
-                Value: g.Value,
-                Err: &golifyErr{
-                    ErrCode: errCode,
-                    ErrMsg:  errMsg,
-                },
-            }
-        }
-
-        return golifyUnknownObject{
-            Value: i,
-            Err:   nil,
+        return golifyIntegerObject{
+            Value: 0,
+            Err:   g.Err,
         }
     }
 
-    return golifyUnknownObject{
-        Value: g.Value,
-        Err: &golifyErr{
-            ErrCode: errCode,
-            ErrMsg:  errMsg,
-        },
+    i, e := strconv.Atoi(g.Value)
+    if e != nil {
+        return golifyIntegerObject{
+            Value: 0,
+            Err: &golifyErr{
+                ErrCode: errCode,
+                ErrMsg:  errMsg,
+            },
+        }
+    }
+
+    return golifyIntegerObject{
+        Value: int64(i),
+        Err:   nil,
     }
 }
-*/
