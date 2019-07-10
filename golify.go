@@ -43,7 +43,7 @@ func (g golifyUnknownObject) NotNil(errCode int, errMsg string) golifyUnknownObj
     }
 }
 
-func (g golifyUnknownObject) ToString(errCode int, errMsg string) golifyStringObject {
+func (g golifyUnknownObject) AsString(errCode int, errMsg string) golifyStringObject {
 
     if g.Err != nil {
         return golifyStringObject{
@@ -69,7 +69,7 @@ func (g golifyUnknownObject) ToString(errCode int, errMsg string) golifyStringOb
 
 }
 
-func (g golifyUnknownObject) ToInteger(errCode int, errMsg string) golifyIntegerObject {
+func (g golifyUnknownObject) AsInteger(errCode int, errMsg string) golifyIntegerObject {
 
     if g.Err != nil {
         return golifyIntegerObject{
