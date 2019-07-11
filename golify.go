@@ -122,3 +122,27 @@ func (g golifyUnknownObject) AsInteger(errCode int, errMsg string) golifyInteger
     }
 
 }
+
+func (g golifyUnknownObject) AsBoolean(errCode int, errMsg string) golifyBooleanObject {
+    if g.Err != nil {
+        return golifyBooleanObject{
+            Value: false,
+            Err:   g.Err,
+        }
+    }
+
+    if reflect.TypeOf(g.Value) == reflect.TypeOf(true) {
+        return golifyBooleanObject{
+            Value: g.Value.(bool),
+            Err:   nil,
+        }
+    }
+
+    return golifyBooleanObject{
+        Value: false,
+        Err: &golifyErr{
+            ErrCode: errCode,
+            ErrMsg:  errMsg,
+        },
+    }
+}
