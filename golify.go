@@ -27,6 +27,21 @@ func (g golifyUnknownObject) NotNil(errCode int, errMsg string) golifyUnknownObj
 		return g
 	}
 
+	// BOOLEAN
+	b := true
+	testBoolPtr := &b
+	if reflect.TypeOf(g.Value) == reflect.TypeOf(testBoolPtr) {
+		if g.Value.(*bool) == nil {
+			return golifyUnknownObject{
+				Value: g.Value,
+				Err: &golifyErr{
+					ErrCode: errCode,
+					ErrMsg:  errMsg,
+				},
+			}
+		}
+	}
+
 	// STRING
 	a := "abc"
 	testStrPtr := &a
@@ -264,6 +279,16 @@ func (g golifyUnknownObject) AsBoolean(errCode int, errMsg string) golifyBoolean
 		return golifyBooleanObject{
 			Value: false,
 			Err:   g.Err,
+		}
+	}
+
+	b := true
+	testBoolPtr := &b
+
+	if reflect.TypeOf(g.Value) == reflect.TypeOf(testBoolPtr) {
+		return golifyBooleanObject{
+			Value: *(g.Value.(*bool)),
+			Err:   nil,
 		}
 	}
 
